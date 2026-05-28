@@ -252,7 +252,6 @@ public class StudyPlanServiceImpl implements StudyPlanService {
         feedback.setProblem(request.getConversationText());
         studyFeedbackMapper.insert(feedback);
 
-        adjustPlan(planId);
         StudySummaryResp latestSummary = getSummary(planId);
 
         StudySummaryReportDO report = new StudySummaryReportDO();
@@ -294,21 +293,20 @@ public class StudyPlanServiceImpl implements StudyPlanService {
                 .map(task -> task.getDayIndex() + ". " + task.getTitle() + "（" + task.getStatus() + "）：" + task.getContent())
                 .collect(Collectors.joining("\n"));
         String prompt = """
-                你是 StudyAgent 的学习助手。请用中文回答，短、准、可执行，不要生成完整报告。
-                只围绕学生当前问题和最近任务回答。
+                你是一个有温度的学习伙伴，用中文和学生聊天。语气自然亲切，像朋友一样，不要太官方。
+                认真分析学生说的话，结合对话历史给出有针对性的回答。
 
-                科目：%s；考试日期：%s；每日学习：%d分钟。
-                最近未完成任务：
+                背景：科目 %s，考试日期 %s，每天学习 %d 分钟。
+                未完成任务：%s
+
+                当前对话：
                 %s
 
-                最近对话：
-                %s
+                学生说：%s
 
-                问题：%s
-
-                输出要求：180字以内。先直接回答，再给1-2个下一步动作。不要客套。
+                要求：直接回答学生的问题，给出实用建议，回答完整自然。
                 """.formatted(plan.getSubject(), plan.getExamDate(), plan.getDailyMinutes(), taskText,
-                compactText(conversationText, 800), message);
+                compactText(conversationText, 1500), message);
         return prompt;
     }
 
@@ -328,7 +326,7 @@ public class StudyPlanServiceImpl implements StudyPlanService {
         if (normalized.length() <= maxLength) {
             return normalized;
         }
-        return normalized.substring(normalized.length() - maxLength);
+        return normalized.substring(0, maxLength) + "...";
     }
 
     private StudySummaryReportResp toSummaryReportResp(StudySummaryReportDO report) {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
+import { marked } from 'marked';
 import { Bot, CheckCircle2, History, MessageCircle, Plus, Send, UserRound } from 'lucide-vue-next';
 
 export type ChatMessage = {
@@ -44,8 +45,20 @@ const emit = defineEmits<{
 const input = ref('');
 const showReports = ref(false);
 const confirmingFinish = ref(false);
+const messagesRef = ref<HTMLDivElement>();
 
 const hasMessages = computed(() => props.messages.length > 0);
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (messagesRef.value) {
+      messagesRef.value.scrollTop = messagesRef.value.scrollHeight;
+    }
+  });
+}
+
+watch(() => props.messages.length, scrollToBottom);
+watch(() => props.messages[props.messages.length - 1]?.content, scrollToBottom);
 
 function sendMessage() {
   if (!input.value.trim()) {
@@ -123,7 +136,7 @@ function confirmFinishConversation() {
         </div>
       </div>
 
-      <div class="assistant-messages">
+      <div ref="messagesRef" class="assistant-messages">
         <div v-if="messages.length === 0" class="assistant-empty">
           <Bot :size="28" />
           <strong>可以直接向我提问你的学习计划</strong>
@@ -134,7 +147,8 @@ function confirmFinishConversation() {
             <UserRound v-if="message.role === 'user'" :size="16" />
             <Bot v-else :size="16" />
           </span>
-          <p>{{ message.content }}</p>
+          <p v-if="message.role === 'user'">{{ message.content }}</p>
+          <p v-else class="chat-md" v-html="marked.parse(message.content)"></p>
         </article>
       </div>
 

@@ -8,6 +8,6 @@ public record AiChatOptions(
 ) {
 
     public static AiChatOptions dailyChat() {
-        return new AiChatOptions(null, 320, 0.4, true);
+        return new AiChatOptions(null, 1024, 0.4, true);
     }
 }
