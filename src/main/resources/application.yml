@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: study-agent
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:study_agent}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+study-agent:
+  ai:
+    enabled: true
+    base-url: ${STUDY_AGENT_AI_BASE_URL:https://token-plan-sgp.xiaomimimo.com/v1}
+    api-key: ${STUDY_AGENT_AI_API_KEY:}
+    model: ${STUDY_AGENT_AI_MODEL:xiaomi/mimo-v2.5}
+    chat-model: ${STUDY_AGENT_AI_CHAT_MODEL:${STUDY_AGENT_AI_MODEL:xiaomi/mimo-v2.5}}

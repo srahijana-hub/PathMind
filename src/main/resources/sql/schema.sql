@@ -1,0 +1,67 @@
+CREATE DATABASE IF NOT EXISTS study_agent
+DEFAULT CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE study_agent;
+
+CREATE TABLE IF NOT EXISTS study_user (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id VARCHAR(64) NOT NULL UNIQUE,
+    nickname VARCHAR(64) NOT NULL,
+    account VARCHAR(128) NOT NULL UNIQUE,
+    password_hash VARCHAR(128) NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS study_plan (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    plan_id VARCHAR(64) NOT NULL UNIQUE,
+    title VARCHAR(100) NOT NULL,
+    subject VARCHAR(100) NOT NULL,
+    exam_date DATE NOT NULL,
+    current_level VARCHAR(500),
+    daily_minutes INT NOT NULL,
+    target_score INT NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS study_task (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    plan_id VARCHAR(64) NOT NULL,
+    day_index INT NOT NULL,
+    task_date DATE NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    estimated_minutes INT NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'TODO',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_plan_id (plan_id)
+);
+
+CREATE TABLE IF NOT EXISTS study_feedback (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    plan_id VARCHAR(64) NOT NULL,
+    task_id BIGINT,
+    completed TINYINT NOT NULL DEFAULT 0,
+    difficulty VARCHAR(32),
+    problem TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_plan_id (plan_id),
+    INDEX idx_task_id (task_id)
+);
+
+CREATE TABLE IF NOT EXISTS study_summary_report (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    plan_id VARCHAR(64) NOT NULL,
+    user_question TEXT,
+    ai_answer TEXT,
+    summary TEXT NOT NULL,
+    suggestions TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_plan_id (plan_id)
+);

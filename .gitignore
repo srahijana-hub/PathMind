@@ -1,0 +1,27 @@
+target/
+frontend/node_modules/
+frontend/dist/
+.mvn/wrapper/dists/
+*.log
+*.tmp
+.env
+.env.*
+!.env.example
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+
+### VS Code ###
+.vscode/
+
+### OS ###
+.DS_Store
+Thumbs.db

@@ -1,0 +1,38 @@
+### Create study plan
+POST http://localhost:8081/api/study/plans
+Content-Type: application/json
+
+{
+  "subject": "数据结构",
+  "examDate": "2026-06-20",
+  "currentLevel": "链表和二叉树比较薄弱",
+  "dailyMinutes": 90,
+  "targetScore": 85
+}
+
+### List study plans
+GET http://localhost:8081/api/study/plans
+
+### Get study plan detail
+# Replace {planId} with the planId returned by create/list API.
+GET http://localhost:8081/api/study/plans/{planId}
+
+### Submit study feedback
+# Replace {planId} and taskId with real values returned by the detail API.
+POST http://localhost:8081/api/study/plans/{planId}/feedback
+Content-Type: application/json
+
+{
+  "taskId": 1,
+  "completed": false,
+  "difficulty": "HARD",
+  "problem": "二叉树递归遍历不熟"
+}
+
+### Adjust study plan
+# Replace {planId} with the real planId.
+POST http://localhost:8081/api/study/plans/{planId}/adjust
+
+### Get study summary
+# Replace {planId} with the real planId.
+GET http://localhost:8081/api/study/plans/e579cbbd-f7e5-4f0a-9432-f49587a3c18f/summary
